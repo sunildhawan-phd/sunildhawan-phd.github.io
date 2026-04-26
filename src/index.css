@@ -1,0 +1,158 @@
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Inter:wght@100..900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-obsidian: #0B0E14;
+  --color-obsidian-light: #1A1F2B;
+  --color-cobalt: #5C7CFA;
+  --color-cobalt-bright: #A5B4FC;
+  --color-silver: #F8FAFC;
+  --color-silver-dark: #94A3B8;
+  --color-glass-white: rgba(255, 255, 255, 0.05);
+  --color-glass-border: rgba(92, 124, 250, 0.2);
+
+  --font-serif: "Crimson Pro", serif;
+  --font-sans: "Geist", "Inter", system-ui, sans-serif;
+}
+
+:root {
+  font-family: var(--font-sans);
+  color-scheme: light;
+}
+
+@variant dark (&:where(.dark, .dark *));
+
+body {
+  @apply transition-colors duration-500;
+  @apply text-gray-900 dark:text-silver;
+  min-height: 100vh;
+  background-color: #f6f7f2;
+  background-image:
+    radial-gradient(circle at 12% 18%, rgba(92, 124, 250, 0.16) 0%, transparent 30%),
+    radial-gradient(circle at 88% 10%, rgba(56, 189, 248, 0.12) 0%, transparent 24%),
+    radial-gradient(circle at 50% 100%, rgba(245, 158, 11, 0.08) 0%, transparent 28%),
+    linear-gradient(180deg, #f8fbff 0%, #f7f3eb 48%, #eef4ff 100%);
+  background-attachment: fixed;
+  animation: ambientShift 24s ease-in-out infinite alternate;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #071018;
+  background-image:
+    radial-gradient(circle at 14% 16%, rgba(92, 124, 250, 0.18) 0%, transparent 28%),
+    radial-gradient(circle at 82% 12%, rgba(16, 185, 129, 0.08) 0%, transparent 22%),
+    radial-gradient(circle at 52% 100%, rgba(56, 189, 248, 0.08) 0%, transparent 30%),
+    linear-gradient(180deg, #0b1220 0%, #0a1018 48%, #071018 100%);
+}
+
+@keyframes ambientShift {
+  0% {
+    background-position: 0% 0%, 100% 0%, 50% 100%, 0% 0%;
+  }
+  100% {
+    background-position: 6% 4%, 94% 6%, 48% 96%, 0% 0%;
+  }
+}
+
+@keyframes overlayFloat {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(0, -1.5%, 0) scale(1.02);
+  }
+}
+
+h1, h2, h3, .serif {
+  font-family: var(--font-serif);
+}
+
+h2 {
+  @apply text-4xl md:text-5xl font-medium text-cobalt dark:text-cobalt-bright mb-6 relative;
+}
+
+h2::after {
+  content: '';
+  @apply absolute left-0 -bottom-2 w-16 h-0.5 bg-cobalt dark:bg-cobalt-bright;
+}
+
+section {
+  @apply py-20 px-6 max-w-7xl mx-auto;
+  position: relative;
+}
+
+@media (max-width: 640px) {
+  section {
+    @apply py-14 px-4;
+  }
+}
+
+.glass {
+  @apply bg-white/70 dark:bg-obsidian-light/60 backdrop-blur-xl saturate-150 border border-gray-200/50 dark:border-glass-border shadow-xl;
+}
+
+.site-shell {
+  position: relative;
+  min-height: 100vh;
+  isolation: isolate;
+}
+
+.site-shell::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -2;
+  background:
+    linear-gradient(to right, rgba(92, 124, 250, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(92, 124, 250, 0.05) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.18));
+}
+
+.site-shell::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.45) 0%, transparent 22%),
+    radial-gradient(circle at 76% 30%, rgba(92, 124, 250, 0.12) 0%, transparent 18%),
+    radial-gradient(circle at 50% 80%, rgba(56, 189, 248, 0.08) 0%, transparent 20%);
+  opacity: 0.9;
+  animation: overlayFloat 18s ease-in-out infinite alternate;
+}
+
+.dark .site-shell::before {
+  background:
+    linear-gradient(to right, rgba(165, 180, 252, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(165, 180, 252, 0.06) 1px, transparent 1px);
+  background-size: 72px 72px;
+}
+
+.dark .site-shell::after {
+  background:
+    radial-gradient(circle at 16% 18%, rgba(92, 124, 250, 0.12) 0%, transparent 24%),
+    radial-gradient(circle at 82% 12%, rgba(56, 189, 248, 0.08) 0%, transparent 18%),
+    radial-gradient(circle at 52% 86%, rgba(16, 185, 129, 0.05) 0%, transparent 18%);
+  opacity: 0.8;
+}
+
+.mesh-gradient {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(46, 95, 163, 0.18) 0%, transparent 40%),
+    radial-gradient(circle at 100% 100%, rgba(74, 144, 226, 0.12) 0%, transparent 44%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.06));
+}
+
+.dark .mesh-gradient {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(92, 124, 250, 0.18) 0%, transparent 38%),
+    radial-gradient(circle at 100% 100%, rgba(56, 189, 248, 0.1) 0%, transparent 42%),
+    linear-gradient(180deg, rgba(15, 23, 42, 0.38), rgba(15, 23, 42, 0.08));
+}
