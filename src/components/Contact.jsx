@@ -1,8 +1,52 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mail, MapPin, Link2 } from 'lucide-react';
 
 const Contact = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState('idle');
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+    setSubmitStatus('idle');
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    // Honeypot: if this hidden field is filled, treat as bot traffic.
+    if (formData.get('company')) {
+      setIsSubmitting(false);
+      setSubmitStatus('success');
+      form.reset();
+      return;
+    }
+
+    const payload = {
+      name: formData.get('name'),
+      email: formData.get('email'),
+      subject: formData.get('subject'),
+      message: formData.get('message')
+    };
+
+    try {
+      // Apps Script web apps often redirect POST responses cross-origin.
+      // no-cors avoids redirect/CORS response handling issues in browsers.
+      await fetch('https://script.google.com/macros/s/AKfycbx3XHlJ8xjm2kGXV14K5o_T3ZHBCrAcvHfihxTWx_3QYqWKh807UKgEHN_CZTz9i5JZ/exec', {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify(payload)
+      });
+
+      setSubmitStatus('success');
+      form.reset();
+    } catch (error) {
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <section id="contact">
       <h2>Let's Connect</h2>
@@ -44,7 +88,18 @@ const Contact = () => {
         </div>
 
         <div className="bg-white dark:bg-obsidian-light/40 p-8 rounded-2xl border border-gray-100 dark:border-glass-border shadow-sm">
-          <form action="https://formspree.io/f/REPLACE_WITH_YOUR_ID" method="POST" className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+            <div className="absolute -left-[10000px] top-auto w-px h-px overflow-hidden" aria-hidden="true">
+              <label htmlFor="company">Company</label>
+              <input
+                id="company"
+                name="company"
+                type="text"
+                tabIndex="-1"
+                autoComplete="off"
+              />
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Name</label>
@@ -71,9 +126,21 @@ const Contact = () => {
               <textarea name="message" rows="4" required className="w-full px-4 py-3 rounded-lg border border-gray-200 dark:border-glass-border bg-white dark:bg-obsidian text-gray-800 dark:text-silver focus:border-cobalt dark:focus:border-cobalt-bright focus:ring-2 focus:ring-cobalt/20 outline-none transition-all" placeholder="Your message..."></textarea>
             </div>
 
-            <button type="submit" className="w-full bg-cobalt dark:bg-cobalt-bright text-white py-4 rounded-lg font-bold hover:opacity-90 transition-opacity shadow-lg shadow-cobalt/20">
-              Send Message
+            <button type="submit" disabled={isSubmitting} className="w-full bg-cobalt dark:bg-cobalt-bright text-white py-4 rounded-lg font-bold hover:opacity-90 transition-opacity shadow-lg shadow-cobalt/20 disabled:opacity-60 disabled:cursor-not-allowed">
+              {isSubmitting ? 'Sending...' : 'Send Message'}
             </button>
+
+            {submitStatus === 'success' && (
+              <p className="text-sm text-green-600 dark:text-green-400" role="status">
+                Message sent successfully. Thank you.
+              </p>
+            )}
+
+            {submitStatus === 'error' && (
+              <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+                Could not send message right now. Please try again in a moment.
+              </p>
+            )}
           </form>
         </div>
       </div>
